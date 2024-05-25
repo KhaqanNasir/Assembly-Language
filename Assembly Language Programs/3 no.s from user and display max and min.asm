@@ -1,3 +1,5 @@
+
+
 .MODEL SMALL
 .STACK 100H
 .DATA  
@@ -42,7 +44,8 @@ MAIN PROC
     INT 21H
     SUB AL, '0' 
     MOV NUM3,AL 
-
+                    
+                    
     ; Initialize MAX and MIN with the first number
     MOV AL, NUM1
     MOV MAX, AL

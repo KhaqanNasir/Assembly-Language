@@ -1,104 +1,107 @@
-org 100h
 
-.model small
-.data   
-   msg db 10,13, "Enter Any Number :$"
-.code
-main proc 
-    mov ax,@data
-    mov ds,ax 
+ORG 100H
+
+.MODEL SMALL 
+.STACK 100H
+.DATA   
+   MSG DB 10,13, "ENTER ANY NUMBER TO PRINT TABLE :$"
+.CODE
+MAIN PROC 
+    MOV AX,@DATA
+    MOV DS,AX 
     
     LEA DX,MSG   
-    mov ah,9h
-    int 21h   
+    MOV AH,9H
+    INT 21H   
     
-    mov ah,1h
-    int 21h
+    MOV AH,1H
+    INT 21H
     
-    mov ch,0ah
-    mov cl,0h
+    MOV CH,0AH
+    MOV CL,0H
     
     
-    cmp al,3ah
-    sub al,30h
-    mov bh,al  
-    mov bl,1h 
+    CMP AL,3AH
+    SUB AL,30H
+    MOV BH,AL  
+    MOV BL,1H 
     
- TableLoop: 
+ TABLELOOP: 
     
-    mov dl,0dh
-    mov ah,2h
-    int 21h
+    MOV DL,0DH
+    MOV AH,2H
+    INT 21H
     
-    mov dl,0ah
-    mov ah,2h
-    int 21h
+    MOV DL,0AH
+    MOV AH,2H
+    INT 21H
     
-    mov dl,bh
-    add dl,30h  
-    mov ah,2h
-    int 21h
+    MOV DL,BH
+    ADD DL,30H  
+    MOV AH,2H
+    INT 21H
     
-    mov dl,'*'
-    mov ah,2h
-    int 21h    
+    MOV DL,'x'
+    MOV AH,2H
+    INT 21H    
     
-    mov al,bl
-    mul bh
+    MOV AL,BL
+    MUL BH
     
     AAM   
     
-    PUSH ax
+    PUSH AX
     
-    mov ah,0h
-    mov al,bl
+    MOV AH,0H
+    MOV AL,BL
     
     AAA 
     
-    mov cl,ah
-    mov bl,al
+    MOV CL,AH
+    MOV BL,AL
     
-    mov dl,cl
-    add dl,30h
-    mov ah,2h
-    int 21h
+    MOV DL,CL
+    ADD DL,30H
+    MOV AH,2H
+    INT 21H
     
-    mov dl,bl
-    add dl,30h
-    mov ah,2h
-    int 21h
-    
-    
- OutputTable:
-    
-    mov dl,'='
-    mov ah,2h
-    int 21h
-    
-    POP ax     
-    
-    mov dh,al
-    mov dl,ah
-    add dl,30h
-    mov ah,2h
-    int 21h
-    
-    mov dl,dh 
-    add dl,30h
-    mov ah,2h
-    int 21h  
-    
-    INC bl
-    DEC ch
-    CMP ch,0h 
-    JNE TableLoop
-    
-    QuitTable:
-    
-    mov ah,4ch
-    int 21h 
+    MOV DL,BL
+    ADD DL,30H
+    MOV AH,2H
+    INT 21H
     
     
-main endp
+ OUTPUTTABLE:
+    
+    MOV DL,'='
+    MOV AH,2H
+    INT 21H
+    
+    POP AX     
+    
+    MOV DH,AL
+    MOV DL,AH
+    ADD DL,30H
+    MOV AH,2H
+    INT 21H
+    
+    MOV DL,DH 
+    ADD DL,30H
+    MOV AH,2H
+    INT 21H         
+    
+    
+    INC BL
+    DEC CH
+    CMP CH,0H 
+    JNE TABLELOOP
+    
+    QUITTABLE:
+    
+    MOV AH,4CH
+    INT 21H 
+    
+    
+MAIN ENDP
 
-ret
+RET

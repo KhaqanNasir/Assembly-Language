@@ -1,5 +1,4 @@
 
-; Even or Odd Number Program
 org 100h
 
 .MODEL SMALL
