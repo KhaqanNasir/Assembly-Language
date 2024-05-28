@@ -67,7 +67,8 @@ TABLELOOP:
     
     ; Calculate BL * CL
     MOV AL, BL
-    MUL CL
+    MUL CL 
+    AAM ; ASCII ADJUST FOR MULTIPLICATION
     
     MOV DX,AX 
     ADD DL,30H 
