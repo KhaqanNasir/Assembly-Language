@@ -1,14 +1,12 @@
 .model small
 .stack 100h
 .data
-STR1_BUFFER   db  16, ?               
-              db  16 dup (?)          
-STR2_BUFFER   db  16, ?               
-              db  16 dup (?)          
-Str3          db  132 dup (?)         
+STR1  db  16 dup ('$')          
+STR2   db  16 dup ('$')          
+Str3          db  32 dup (?)         
 MSG1          db  "Enter 1st String : $"
 MSG2          DB  13,10,"Enter 2nd string : $"
-NEWLINE       db  13, 10, 'Concatenated string : $'
+MSG3       db  13, 10, 'Concatenated string : $'
 
 .code 
 main proc
@@ -19,19 +17,22 @@ main proc
     lea  dx, MSG1
     int  21h
   
-    mov  ah, 0Ah
-    lea  dx, STR1_BUFFER
+ 
+    lea  dx, STR1        ; INPUT 1ST STRING
+     mov  ah, 0Ah
     int  21h
         
-    mov  ah, 09h
-    lea  dx, MSG2
+   
+    lea  dx, MSG2 
+     mov  ah, 09h
     int  21h
     
+    
+    lea  dx, STR2      ; INPUT SECOND STRING
     mov  ah, 0Ah
-    lea  dx, STR2_BUFFER
     int  21h            
   
-    mov  si, offset STR1_BUFFER + 2   
+    mov  si, offset STR1 + 2  
     mov  di, offset Str3
 
 CopyString:
@@ -39,22 +40,22 @@ CopyString:
     mov  [di], al
     inc  si
     inc  di
-    dec  byte ptr STR1_BUFFER + 1     
+    dec  byte ptr STR1 + 1     
     jnz  CopyString  
     
-    mov  si, offset STR2_BUFFER + 2   
+    mov  si, offset STR2 + 2   
                     
  CopyStringsec:   
      mov  al, [si]
     mov  [di], al
     inc  si
     inc  di
-    dec  byte ptr STR2_BUFFER + 1      
+    dec  byte ptr STR2 + 1      
     jnz  CopyStringsec  
     
     mov  byte ptr [di], '$'
   
-    lea  dx, NEWLINE
+    lea  dx, MSG3
     mov  ah, 09h
     int  21h
    

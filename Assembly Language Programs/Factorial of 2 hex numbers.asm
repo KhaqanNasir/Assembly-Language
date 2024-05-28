@@ -4,7 +4,7 @@
 MSG1 DB 'ENTER A TWO-DIGIT HEX NUMBER: $'
 MSG2 DB 0DH,0AH,'FACTORIAL IS: $'
 NEWLINE DB 0DH,0AH,'$'
-FACTORIAL DB 10 DUP(0) ; To store the factorial result
+FACTORIAL DB 100 DUP(?) ; To store the factorial result
 .CODE
 MAIN PROC      
     
@@ -37,9 +37,10 @@ MAIN PROC
     MOV BL,AL
 
     ; Calculate factorial
-    MOV CX,0
+    ; MOV CX,0
     MOV CL,BL
-    MOV AX,1
+    MOV Al,1
+    
 FACTORIAL_LOOP:
     CMP CL,0
     JE DISPLAY_RESULT
@@ -72,8 +73,6 @@ HEX_TO_DEC PROC
     JL INVALID_INPUT
     CMP BL,'9'
     JLE NUMERIC
-    CMP BL,'A'
-    JL INVALID_INPUT
     CMP BL,'F'
     JG INVALID_INPUT
     SUB BL,37H
@@ -86,26 +85,29 @@ DONE:
 INVALID_INPUT:
     MOV AL,0
     RET
-ENDP
+HEX_TO_DEC ENDP
 
 PRINT_DECIMAL PROC
-    MOV CX,10
-    MOV DI,OFFSET FACTORIAL + 9
-    MOV BYTE PTR [DI], '$'
-    DEC DI
+    MOV CX, 10                    ; CX is set to 10 for decimal division
+    MOV DI, OFFSET FACTORIAL + 9  ; DI points to the end of the buffer
+    MOV BYTE PTR [DI], '$'        ; Null-terminate the string with '$'
+    DEC DI                        ; Move to the next position for digit storage
+
 PRINT_LOOP:
-    XOR DX,DX
-    DIV CX
-    ADD DL,'0'
-    MOV [DI],DL
-    DEC DI
-    CMP AX,0
-    JNE PRINT_LOOP
-    INC DI
-    LEA DX,DI
-    MOV AH,09H
-    INT 21H
-    RET
-ENDP
+    XOR DX, DX                    ; Clear DX for division
+    DIV CX                        ; Divide AX by 10 (CX), quotient in AX, remainder in DX
+    ADD DL, '0'                   ; Convert remainder to ASCII ('0'-'9')
+    MOV [DI], DL                  ; Store ASCII digit in buffer
+    DEC DI                        ; Move to the next position
+    CMP AX, 0                     ; Check if quotient is zero
+    JNE PRINT_LOOP                ; If not zero, continue the loop
+
+    INC DI                        ; Move DI back to the first digit
+    LEA DX, [DI]                  ; Load address of the string into DX
+    MOV AH, 09H                   ; DOS function to print string
+    INT 21H                       ; Call DOS interrupt
+    RET                           ; Return from the procedure
+PRINT_DECIMAL ENDP
+
 
 END MAIN

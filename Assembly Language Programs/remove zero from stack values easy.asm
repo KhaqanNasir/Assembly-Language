@@ -2,10 +2,10 @@
 .STACK 100H
 .DATA
   VALUES DW 450, 0, 487, 101, 500, 0, 359, 0, 458 
-  VALUES_WITHOUT_ZEROS DW 9 DUP(0)    ; Array to store non-zero values
+  VALUES_WITHOUT_ZEROS DW 9 DUP(?)        ; Array to store non-zero values
   MSG DB 'Array Values without Zeros: $'  ; Message to display before printing array
-  NEWLINE DB 0DH,0AH,'$'     ; Newline character
-  BUFFER DB 9 DUP(?)         ; Buffer to store ASCII representation of each number
+  NEWLINE DB 0DH,0AH,'$'                  ; Newline character
+  BUFFER DB 9 DUP(?)                      ; Buffer to store ASCII representation of each number
 
 .CODE
 MAIN PROC
@@ -38,11 +38,17 @@ SKIP_ZERO:
   ; Display message
   LEA DX, MSG
   MOV AH, 09H
+  INT 21H 
+  
+  ; Display newline
+  LEA DX, NEWLINE
+  MOV AH, 09H
   INT 21H
 
   ; Print array values without zeros
   MOV SI, OFFSET VALUES_WITHOUT_ZEROS   ; Point SI to the beginning of VALUES_WITHOUT_ZEROS array
-  MOV CX, 6              ; Number of elements in the array
+  MOV CX, 6             ; Number of elements in the array
+
 
 PRINT_LOOP:
   MOV AX, [SI]            ; Load the current value into AX
@@ -53,16 +59,14 @@ PRINT_LOOP:
   INT 21H
   LOOP PRINT_LOOP         ; Repeat until all elements are printed
 
-  ; Display newline
-  LEA DX, NEWLINE
-  MOV AH, 09H
-  INT 21H
+  
 
   ; Terminate program
   MOV AH, 4CH     ; Terminate program
   INT 21H
 
-MAIN ENDP
+MAIN ENDP 
+
 
 PrintNumber PROC
   ; Convert AX to ASCII and store in BUFFER
