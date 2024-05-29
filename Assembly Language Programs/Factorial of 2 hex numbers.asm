@@ -2,8 +2,8 @@
 .STACK 100H
 .DATA
 MSG1 DB 'ENTER A TWO-DIGIT HEX NUMBER: $'
-MSG2 DB 0DH,0AH,'FACTORIAL IS: $'
-NEWLINE DB 0DH,0AH,'$'
+MSG2 DB 0DH,0AH,'FACTORIAL IS: $' 
+TEN DW 10
 FACTORIAL DB 100 DUP(?) ; To store the factorial result
 .CODE
 MAIN PROC      
@@ -39,7 +39,7 @@ MAIN PROC
     ; Calculate factorial
     ; MOV CX,0
     MOV CL,BL
-    MOV Al,1
+    MOV AL,1
     
 FACTORIAL_LOOP:
     CMP CL,0
@@ -52,15 +52,17 @@ DISPLAY_RESULT:
     ; Display result message
     LEA DX,MSG2
     MOV AH,09H
-    INT 21H
+    INT 21H 
+    
+    LEA SI,FACTORIAL
 
     ; Convert AX to decimal string and display
-    CALL PRINT_DECIMAL
+    CALL ConvertToDecimal
     
-    ; Newline
-    LEA DX,NEWLINE
-    MOV AH,09H
-    INT 21H
+      
+     lea dx, FACTORIAL
+    mov ah, 09h
+    int 21h
     
     ; Exit program
     MOV AH,4CH
@@ -72,9 +74,21 @@ HEX_TO_DEC PROC
     CMP BL,'0'
     JL INVALID_INPUT
     CMP BL,'9'
-    JLE NUMERIC
+    JLE NUMERIC 
+    CMP BL,'A'
+    JE HEX
+    CMP BL,'B'
+    JE HEX 
+    CMP BL,'C'
+    JE HEX 
+    CMP BL,'D'
+    JE HEX
+    CMP BL,'E'
+    JE HEX
     CMP BL,'F'
-    JG INVALID_INPUT
+    JE HEX
+    JG INVALID_INPUT 
+  HEX:  
     SUB BL,37H
     JMP DONE
 NUMERIC:
@@ -87,27 +101,23 @@ INVALID_INPUT:
     RET
 HEX_TO_DEC ENDP
 
-PRINT_DECIMAL PROC
-    MOV CX, 10                    ; CX is set to 10 for decimal division
-    MOV DI, OFFSET FACTORIAL + 9  ; DI points to the end of the buffer
-    MOV BYTE PTR [DI], '$'        ; Null-terminate the string with '$'
-    DEC DI                        ; Move to the next position for digit storage
+ConvertToDecimal proc
+    mov di, si
+    add di, 10   ; Point to the end of the buffer
+    mov byte ptr [di], '$'  ; Null terminator for DOS string
 
-PRINT_LOOP:
-    XOR DX, DX                    ; Clear DX for division
-    DIV CX                        ; Divide AX by 10 (CX), quotient in AX, remainder in DX
-    ADD DL, '0'                   ; Convert remainder to ASCII ('0'-'9')
-    MOV [DI], DL                  ; Store ASCII digit in buffer
-    DEC DI                        ; Move to the next position
-    CMP AX, 0                     ; Check if quotient is zero
-    JNE PRINT_LOOP                ; If not zero, continue the loop
+    ; Convert each digit
+    convert_loop:
+        dec di
+        xor dx, dx
+        div word ptr [ten]
+        add dl, 30h
+        mov [di], dl
+        test ax, ax
+        jnz convert_loop
 
-    INC DI                        ; Move DI back to the first digit
-    LEA DX, [DI]                  ; Load address of the string into DX
-    MOV AH, 09H                   ; DOS function to print string
-    INT 21H                       ; Call DOS interrupt
-    RET                           ; Return from the procedure
-PRINT_DECIMAL ENDP
+    ret
+ConvertToDecimal endp
 
 
 END MAIN
