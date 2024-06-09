@@ -36,8 +36,7 @@ MAIN PROC
   MOV DL,AL
   MOV AH,02H
   INT 21H
-  LOOP L3 
-      
+  LOOP L3       
     
 ENDP
 END MAIN                                               

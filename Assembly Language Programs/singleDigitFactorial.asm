@@ -1,5 +1,5 @@
-.stack 100h
 .model small
+.stack 100h
 .data
 msg1 db "Enter 1 digit (0-9): $"
 msg2 db "Factorial is: $"

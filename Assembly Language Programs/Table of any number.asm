@@ -1,10 +1,7 @@
-
-ORG 100H
-
 .MODEL SMALL 
 .STACK 100H
 .DATA   
-   MSG DB 10,13, "ENTER ANY NUMBER TO PRINT TABLE :$"
+   MSG DB "ENTER ANY NUMBER TO PRINT TABLE :$"
 .CODE
 MAIN PROC 
     MOV AX,@DATA
@@ -19,20 +16,19 @@ MAIN PROC
     
     MOV CH,0AH
     MOV CL,0H
-    
-    
-    CMP AL,3AH
+   
+  ;  CMP AL,3AH
     SUB AL,30H
     MOV BH,AL  
     MOV BL,1H 
     
  TABLELOOP: 
     
-    MOV DL,0DH
+    MOV DL,0DH     ;carrige return
     MOV AH,2H
     INT 21H
     
-    MOV DL,0AH
+    MOV DL,0AH     ;new line
     MOV AH,2H
     INT 21H
     
@@ -48,7 +44,7 @@ MAIN PROC
     MOV AL,BL
     MUL BH
     
-    AAM   
+    AAM    ;adjust ascii for multiplication
     
     PUSH AX
     
@@ -96,12 +92,10 @@ MAIN PROC
     CMP CH,0H 
     JNE TABLELOOP
     
-    QUITTABLE:
     
     MOV AH,4CH
     INT 21H 
     
     
 MAIN ENDP
-
-RET
+END MAIN
